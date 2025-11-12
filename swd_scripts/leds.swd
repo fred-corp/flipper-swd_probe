@@ -1,0 +1,10 @@
+leds 0 1
+message 500 "" nodialog
+leds 1 1
+message 500 "" nodialog
+leds 2 1
+message 500 "" nodialog
+leds 0 0
+leds 1 0
+leds 2 0
+message 0 "Fill finished" dialog
