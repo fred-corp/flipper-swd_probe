@@ -1091,6 +1091,26 @@ static bool swd_scriptfunc_leds(ScriptContext* ctx) {
     return success;
 }
 
+static bool swd_scriptfunc_delay(ScriptContext* ctx) {
+    uint32_t delay_time = 0;
+    DBGS("delay");
+
+    if(!swd_script_skip_whitespace(ctx)) {
+        swd_script_log(ctx, FuriLogLevelError, "missing whitespace");
+        return false;
+    }
+
+    if(!swd_script_get_number(ctx, &delay_time)) {
+        swd_script_log(ctx, FuriLogLevelError, "failed to parse delay_time");
+        return false;
+    }
+
+    swd_script_gui_refresh(ctx);
+    furi_delay_ms(delay_time);
+
+    return true;
+}
+
 static bool swd_scriptfunc_message(ScriptContext* ctx) {
     uint32_t wait_time = 0;
     char message[256];
@@ -2037,6 +2057,7 @@ static const ScriptFunctionInfo script_funcs[] = {
     {"message", &swd_scriptfunc_message},
     {"beep", &swd_scriptfunc_beep},
     {"leds", &swd_scriptfunc_leds},
+    {"delay", &swd_scriptfunc_delay},
     {"max_tries", &swd_scriptfunc_maxtries},
     {"swd_clock_delay", &swd_scriptfunc_swd_clock_delay},
     {"swd_idle_bits", &swd_scriptfunc_swd_idle_bits},

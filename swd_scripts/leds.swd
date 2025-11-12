@@ -1,9 +1,9 @@
 leds 0 1
-message 500 "" nodialog
+delay 500
 leds 1 1
-message 500 "" nodialog
+delay 500
 leds 2 1
-message 500 "" nodialog
+delay 500
 leds 0 0
 leds 1 0
 leds 2 0
