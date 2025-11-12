@@ -1032,6 +1032,65 @@ static bool swd_scriptfunc_beep(ScriptContext* ctx) {
     return true;
 }
 
+static bool swd_scriptfunc_leds(ScriptContext* ctx) {
+    DBGS("leds");
+    bool success = true;
+
+    // string looks like "led <r/g/b> <0/1>"
+
+    uint32_t color = 0;
+    uint32_t state = 0;
+
+
+    if(!swd_script_skip_whitespace(ctx)) {
+        swd_script_log(ctx, FuriLogLevelError, "missing whitespace");
+        return false;
+    }
+
+    if(!swd_script_get_number(ctx, &color)) {
+        swd_script_log(ctx, FuriLogLevelError, "failed to parse color");
+        return false;
+    }
+
+    if(!swd_script_skip_whitespace(ctx)) {
+        swd_script_log(ctx, FuriLogLevelError, "missing whitespace");
+        return false;
+    }
+
+    if(!swd_script_get_number(ctx, &state)) {
+        swd_script_log(ctx, FuriLogLevelError, "failed to parse state");
+        return false;
+    }
+
+    switch (color)
+    {
+    case 0:
+        notification_message_block(
+            ctx->app->notification, state >= 1 ? &sequence_set_red_255 : &sequence_reset_red);
+        break;
+
+    case 1:
+        notification_message_block(
+            ctx->app->notification, state >= 1 ? &sequence_set_green_255 : &sequence_reset_green);
+        break;
+    
+    case 2:
+        notification_message_block(
+            ctx->app->notification, state >= 1 ? &sequence_set_blue_255 : &sequence_reset_blue);
+        break;
+    
+    default:
+        success = false;
+        break;
+    }
+
+
+
+    swd_script_seek_newline(ctx);
+
+    return success;
+}
+
 static bool swd_scriptfunc_message(ScriptContext* ctx) {
     uint32_t wait_time = 0;
     char message[256];
@@ -1977,6 +2036,7 @@ static const ScriptFunctionInfo script_funcs[] = {
     {"errors", &swd_scriptfunc_errors},
     {"message", &swd_scriptfunc_message},
     {"beep", &swd_scriptfunc_beep},
+    {"leds", &swd_scriptfunc_leds},
     {"max_tries", &swd_scriptfunc_maxtries},
     {"swd_clock_delay", &swd_scriptfunc_swd_clock_delay},
     {"swd_idle_bits", &swd_scriptfunc_swd_idle_bits},
